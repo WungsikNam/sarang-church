@@ -152,10 +152,21 @@ function AppInner() {
           fontSize: '0.72rem',
           color: 'var(--text-hint)',
           opacity: 0.6,
-          letterSpacing: '0.2px'
+          letterSpacing: '0.2px',
+          marginBottom: '12px',
         }}>
           © 2026 사랑의교회. All rights reserved.
         </p>
+        <button
+          onClick={() => navigateTo('admin')}
+          style={{
+            background: 'none', border: 'none', cursor: 'pointer',
+            fontSize: '0.7rem', color: 'var(--text-hint)', opacity: 0.35,
+            padding: '4px 8px',
+          }}
+        >
+          관리자
+        </button>
       </footer>
       <BottomNav current={currentPage} navigateTo={navigateTo} />
     </>

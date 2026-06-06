@@ -7,9 +7,33 @@ const ADMIN_PW = 'admin';
 
 // ── 공지사항 ───────────────────────────────────────────────
 function AnnouncementsTab({ data, onChange }) {
-  const empty = { date: '', title: '', content: '' };
+  const empty = { date: '', title: '', content: '', attachments: [] };
   const [form, setForm] = useState(empty);
   const [editId, setEditId] = useState(null);
+  const [uploading, setUploading] = useState(false);
+
+  const handleFile = async (e) => {
+    const files = Array.from(e.target.files ?? []);
+    if (!files.length) return;
+    setUploading(true);
+    try {
+      const uploaded = await Promise.all(
+        files.map(async (file) => {
+          const url = await uploadPhoto(file, `announcements/${Date.now()}_${file.name}`);
+          return { name: file.name, url };
+        })
+      );
+      setForm(prev => ({ ...prev, attachments: [...(prev.attachments ?? []), ...uploaded] }));
+    } catch (err) {
+      alert('업로드 실패: ' + err.message);
+    } finally {
+      setUploading(false);
+      e.target.value = '';
+    }
+  };
+
+  const removeAttachment = (idx) =>
+    setForm(prev => ({ ...prev, attachments: prev.attachments.filter((_, i) => i !== idx) }));
 
   const save = () => {
     if (!form.title.trim()) return alert('제목을 입력해주세요.');
@@ -23,7 +47,7 @@ function AnnouncementsTab({ data, onChange }) {
   };
 
   const startEdit = (item) => {
-    setForm({ date: item.date, title: item.title, content: item.content });
+    setForm({ date: item.date, title: item.title, content: item.content, attachments: item.attachments ?? [] });
     setEditId(item.id);
   };
 
@@ -47,6 +71,43 @@ function AnnouncementsTab({ data, onChange }) {
         <textarea placeholder="내용 (선택)" value={form.content}
           onChange={e => setForm({ ...form, content: e.target.value })}
           style={s.textarea} rows={3} />
+
+        <label style={s.label}>첨부파일</label>
+        <label style={{
+          display: 'flex', alignItems: 'center', gap: '10px',
+          background: '#f5f0ea', border: '1.5px dashed #C49A6C',
+          borderRadius: '10px', padding: '12px 16px', cursor: 'pointer', marginBottom: '8px',
+        }}>
+          <i className="fas fa-paperclip" style={{ color: '#8B5A2B', fontSize: '1rem' }} />
+          <div>
+            <p style={{ fontSize: '0.85rem', fontWeight: '600', color: '#5D4037', margin: 0 }}>
+              {uploading ? '업로드 중...' : '파일 첨부'}
+            </p>
+            <p style={{ fontSize: '0.72rem', color: '#aaa', margin: 0 }}>PDF · 이미지 · 문서 (복수 선택 가능)</p>
+          </div>
+          <input type="file" multiple onChange={handleFile} style={{ display: 'none' }} disabled={uploading} />
+        </label>
+
+        {(form.attachments ?? []).length > 0 && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '10px' }}>
+            {form.attachments.map((f, i) => (
+              <div key={i} style={{
+                display: 'flex', alignItems: 'center', gap: '8px',
+                background: '#f9f9f9', borderRadius: '8px', padding: '8px 12px',
+                border: '1px solid #e8e8e8',
+              }}>
+                <i className="fas fa-file" style={{ color: '#8B5A2B', fontSize: '0.85rem' }} />
+                <span style={{ flex: 1, fontSize: '0.82rem', color: '#444', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {f.name}
+                </span>
+                <button onClick={() => removeAttachment(i)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#c0392b', fontSize: '0.8rem' }}>
+                  <i className="fas fa-times" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
         <div style={s.row}>
           <button onClick={save} style={s.btnPrimary}>{editId ? '수정 저장' : '등록'}</button>
           {editId && <button onClick={cancel} style={s.btnGhost}>취소</button>}
@@ -62,6 +123,12 @@ function AnnouncementsTab({ data, onChange }) {
               <strong style={{ flex: 1, fontSize: '0.92rem' }}>{item.title}</strong>
             </div>
             {item.content && <p style={s.listContent}>{item.content}</p>}
+            {(item.attachments ?? []).length > 0 && (
+              <p style={{ fontSize: '0.75rem', color: '#8B5A2B', marginTop: '4px' }}>
+                <i className="fas fa-paperclip" style={{ marginRight: '4px' }} />
+                첨부 {item.attachments.length}개
+              </p>
+            )}
             <div style={{ ...s.row, marginTop: '8px' }}>
               <button onClick={() => startEdit(item)} style={s.btnSmall}>수정</button>
               <button onClick={() => remove(item.id)} style={s.btnDanger}>삭제</button>
@@ -77,12 +144,27 @@ function AnnouncementsTab({ data, onChange }) {
 function BulletinTab({ data, onChange }) {
   const [form, setForm] = useState(data);
   const [saved, setSaved] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   const save = () => {
-    if (!form.url.trim()) return alert('주보 URL을 입력해주세요.');
+    if (!form.url.trim()) return alert('주보 파일을 업로드하거나 URL을 입력해주세요.');
     onChange(form);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
+  };
+
+  const handleFile = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const url = await uploadPhoto(file, `bulletin/${Date.now()}_${file.name}`);
+      setForm(prev => ({ ...prev, url }));
+    } catch (err) {
+      alert('업로드 실패: ' + err.message);
+    } finally {
+      setUploading(false);
+    }
   };
 
   return (
@@ -91,10 +173,34 @@ function BulletinTab({ data, onChange }) {
       <label style={s.label}>주보 제목</label>
       <input placeholder="예: 2026년 5월 15일 주보" value={form.title}
         onChange={e => setForm({ ...form, title: e.target.value })} style={s.input} />
-      <label style={s.label}>주보 PDF URL</label>
-      <input placeholder="/bulletin.pdf 또는 외부 링크" value={form.url}
-        onChange={e => setForm({ ...form, url: e.target.value })} style={s.input} />
-      <p style={s.hint}>PDF를 public/ 폴더에 넣으면 /파일명.pdf로 사용 가능합니다.</p>
+
+      <label style={s.label}>파일 업로드 (PDF · 이미지)</label>
+      <label style={{
+        display: 'flex', alignItems: 'center', gap: '10px',
+        background: '#f5f0ea', border: '1.5px dashed #C49A6C',
+        borderRadius: '10px', padding: '14px 16px', cursor: 'pointer',
+        marginBottom: '10px',
+      }}>
+        <i className="fas fa-upload" style={{ color: '#8B5A2B', fontSize: '1.1rem' }} />
+        <div>
+          <p style={{ fontSize: '0.88rem', fontWeight: '600', color: '#5D4037', margin: 0 }}>
+            {uploading ? '업로드 중...' : '파일 선택'}
+          </p>
+          <p style={{ fontSize: '0.75rem', color: '#aaa', margin: 0 }}>PDF, JPG, PNG</p>
+        </div>
+        <input type="file" accept=".pdf,image/*" onChange={handleFile}
+          style={{ display: 'none' }} disabled={uploading} />
+      </label>
+
+      {form.url && (
+        <div style={{ marginBottom: '12px', padding: '10px 12px', background: '#f0f8f0', borderRadius: '8px', border: '1px solid #c3e6c3' }}>
+          <p style={{ fontSize: '0.75rem', color: '#2e7d32', fontWeight: '600', margin: 0 }}>
+            <i className="fas fa-check-circle" style={{ marginRight: '5px' }} />
+            업로드 완료
+          </p>
+        </div>
+      )}
+
       <button onClick={save} style={s.btnPrimary}>{saved ? '저장됨 ✓' : '저장'}</button>
     </div>
   );
@@ -157,9 +263,24 @@ function ServicesTab({ data, onChange }) {
 
 // ── 신도회 ────────────────────────────────────────────────
 function CongregationTab({ data, onChange }) {
-  const empty = { name: '', leader: '', description: '' };
+  const empty = { name: '', leader: '', description: '', photoUrl: '' };
   const [form, setForm] = useState(empty);
   const [editId, setEditId] = useState(null);
+  const [uploading, setUploading] = useState(false);
+
+  const handlePhoto = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const url = await uploadPhoto(file, `congregation/${Date.now()}_${file.name}`);
+      setForm(prev => ({ ...prev, photoUrl: url }));
+    } catch (err) {
+      alert('업로드 실패: ' + err.message);
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const save = () => {
     if (!form.name.trim()) return alert('신도회 이름을 입력해주세요.');
@@ -173,7 +294,7 @@ function CongregationTab({ data, onChange }) {
   };
 
   const startEdit = (item) => {
-    setForm({ name: item.name, leader: item.leader, description: item.description });
+    setForm({ name: item.name, leader: item.leader, description: item.description, photoUrl: item.photoUrl ?? '' });
     setEditId(item.id);
   };
 
@@ -188,6 +309,32 @@ function CongregationTab({ data, onChange }) {
     <div>
       <div style={s.card}>
         <h3 style={s.cardTitle}>{editId ? '신도회 수정' : '신도회 추가'}</h3>
+
+        <label style={s.label}>대표 사진</label>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '12px' }}>
+          <div style={{
+            width: '72px', height: '72px', borderRadius: '12px', flexShrink: 0,
+            background: '#f0f0f0', overflow: 'hidden',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            {form.photoUrl
+              ? <img src={form.photoUrl} alt="사진" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              : <i className="fas fa-image" style={{ fontSize: '1.8rem', color: '#ccc' }} />
+            }
+          </div>
+          <label style={{
+            display: 'inline-flex', alignItems: 'center', gap: '6px',
+            background: uploading ? '#ccc' : '#8B5A2B', color: '#fff',
+            padding: '8px 16px', borderRadius: '8px', cursor: uploading ? 'not-allowed' : 'pointer',
+            fontSize: '0.85rem', fontWeight: '600',
+          }}>
+            <i className="fas fa-upload" />
+            {uploading ? '업로드 중...' : '사진 선택'}
+            <input type="file" accept="image/*" onChange={handlePhoto}
+              style={{ display: 'none' }} disabled={uploading} />
+          </label>
+        </div>
+
         <input placeholder="신도회명 (예: 청년부)" value={form.name}
           onChange={e => setForm({ ...form, name: e.target.value })} style={s.input} />
         <input placeholder="담당자 (예: 홍길동 권사)" value={form.leader}
@@ -205,12 +352,26 @@ function CongregationTab({ data, onChange }) {
         {data.length === 0 && <p style={s.empty}>등록된 신도회가 없습니다.</p>}
         {data.map(item => (
           <div key={item.id} style={s.listItem}>
-            <div style={s.row}>
-              <strong style={{ flex: 1, fontSize: '0.92rem' }}>{item.name}</strong>
-              {item.leader && <span style={s.badge}>{item.leader}</span>}
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+              <div style={{
+                width: '48px', height: '48px', borderRadius: '10px', flexShrink: 0,
+                background: '#f0f0f0', overflow: 'hidden',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                {item.photoUrl
+                  ? <img src={item.photoUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  : <i className="fas fa-image" style={{ color: '#ddd', fontSize: '1.2rem' }} />
+                }
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={s.row}>
+                  <strong style={{ flex: 1, fontSize: '0.92rem' }}>{item.name}</strong>
+                  {item.leader && <span style={s.badge}>{item.leader}</span>}
+                </div>
+                {item.description && <p style={s.listContent}>{item.description}</p>}
+              </div>
             </div>
-            {item.description && <p style={s.listContent}>{item.description}</p>}
-            <div style={{ ...s.row, marginTop: '8px' }}>
+            <div style={{ ...s.row, marginTop: '10px' }}>
               <button onClick={() => startEdit(item)} style={s.btnSmall}>수정</button>
               <button onClick={() => remove(item.id)} style={s.btnDanger}>삭제</button>
             </div>

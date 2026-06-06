@@ -1,317 +1,300 @@
+import { useState, useEffect, useRef } from 'react';
 import { useStore } from '../data/StoreContext';
+
+const CENTER_LAT = 37.4936;
+const CENTER_LNG = 126.7794;
+const CENTER_NAME = '사랑의지역아동센터';
+
+const STAFF = [
+  { role: '담임목사',      name: '김윤범', color: 'var(--primary)' },
+  { role: '원로목사',      name: '성양권', color: '#475569' },
+  { role: '시무장로',      name: '육근현', color: '#059669' },
+  { role: '전도사·센터장', name: '허진영', color: '#D97706' },
+];
+
+/* 스크롤 감지 훅 */
+const useReveal = () => {
+  const ref = useRef(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { el.classList.add('visible'); obs.unobserve(el); } },
+      { threshold: 0.12 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+  return ref;
+};
+
+const Reveal = ({ children, delay = 0, style = {} }) => {
+  const ref = useReveal();
+  return (
+    <div ref={ref} className="reveal" style={{ animationDelay: `${delay}ms`, ...style }}>
+      {children}
+    </div>
+  );
+};
+
+const CenterMap = () => {
+  const mapRef = useRef(null);
+  useEffect(() => {
+    const render = () => {
+      if (!mapRef.current) return;
+      const pos = new window.kakao.maps.LatLng(CENTER_LAT, CENTER_LNG);
+      const map = new window.kakao.maps.Map(mapRef.current, { center: pos, level: 3 });
+      const marker = new window.kakao.maps.Marker({ position: pos, map });
+      new window.kakao.maps.InfoWindow({
+        content: `<div style="padding:5px 10px;font-size:12px;font-weight:600;white-space:nowrap;">${CENTER_NAME}</div>`,
+      }).open(map, marker);
+    };
+    if (window.kakao?.maps) window.kakao.maps.load(render);
+    else {
+      const s = document.querySelector('script[src*="dapi.kakao.com"]');
+      if (s) { const fn = () => window.kakao.maps.load(render); s.addEventListener('load', fn); return () => s.removeEventListener('load', fn); }
+    }
+  }, []);
+  return <div ref={mapRef} style={{ width: '100%', height: '200px' }} />;
+};
 
 const ChurchInfo = () => {
   const { store } = useStore();
   const { text, history, photoUrl } = store.greeting;
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [greetingOpen, setGreetingOpen] = useState(false);
 
   return (
-    <div className="page">
+    <div className="page" style={{ background: '#F9F7F4' }}>
 
-      {/* 담임목사 프로필 — 대형 사진 */}
-      <div style={{ position: 'relative', background: 'var(--surface)', marginBottom: '0' }}>
-        {/* 사진 영역 */}
+      {/* 히어로 */}
+      <div style={{ position: 'relative', height: '320px', overflow: 'hidden' }}>
         <div style={{
-          width: '100%',
-          height: '300px',
-          background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-dk) 100%)',
-          overflow: 'hidden',
-          position: 'relative',
-        }}>
-          {photoUrl && (
-            <img
-              src={photoUrl}
-              alt="담임목사"
-              style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' }}
-            />
-          )}
-          {/* 하단 그라디언트 오버레이 */}
-          <div style={{
-            position: 'absolute', inset: 0,
-            background: 'linear-gradient(to bottom, transparent 40%, rgba(30,15,5,0.75) 100%)',
+          position: 'absolute', inset: 0,
+          background: 'linear-gradient(135deg, var(--primary-dk) 0%, var(--primary) 100%)',
+        }} />
+        {photoUrl && (
+          <img src={photoUrl} alt="담임목사" style={{
+            position: 'absolute', inset: 0, width: '100%', height: '100%',
+            objectFit: 'cover', objectPosition: 'top center',
+            animation: 'fadeIn 1.2s ease both',
           }} />
-          {/* 이름 오버레이 */}
-          <div style={{
-            position: 'absolute', bottom: '20px', left: '20px',
-          }}>
-            <p style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.7)', fontWeight: '500', marginBottom: '4px' }}>
-              한국기독교장로회 사랑의교회
-            </p>
-            <p style={{ fontSize: '1.35rem', fontWeight: '700', color: '#fff', letterSpacing: '-0.3px' }}>
-              김윤범 목사
-            </p>
-            <p style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.85)', marginTop: '3px' }}>
-              담임목사
+        )}
+        {/* 패턴 오버레이 */}
+        <div style={{
+          position: 'absolute', inset: 0,
+          backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(255,255,255,0.04) 0%, transparent 60%)',
+        }} />
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(15,8,3,0.82) 100%)',
+        }} />
+        <div style={{
+          position: 'absolute', bottom: '28px', left: '22px', right: '22px',
+          animation: 'fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.2s both',
+        }}>
+          <p style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', letterSpacing: '2.5px', marginBottom: '8px', textTransform: 'uppercase' }}>
+            한국기독교장로회
+          </p>
+          <h1 style={{ fontSize: '2.2rem', fontWeight: '900', color: '#fff', letterSpacing: '-0.5px', lineHeight: 1.05, marginBottom: '10px' }}>
+            사랑의교회
+          </h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ width: '20px', height: '1px', background: 'rgba(255,255,255,0.5)' }} />
+            <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.75)', letterSpacing: '0.5px' }}>
+              김윤범 담임목사
             </p>
           </div>
         </div>
       </div>
 
-      <div className="page-body" style={{ paddingTop: '20px' }}>
-
-        {/* 1. 교회 소개 섹션 */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' }}>
-          <div className="page-section-title" style={{ marginBottom: 0 }}>교회 소개</div>
-          <div className="card" style={{
-            background: 'var(--white)',
-            padding: '22px 20px',
-            border: '1px solid var(--border)',
-            borderRadius: 'var(--r)',
-            boxShadow: 'var(--shadow-xs)'
-          }}>
-            <h3 style={{
-              fontSize: '1.25rem',
-              fontWeight: '800',
-              color: 'var(--primary-dk)',
-              marginBottom: '14px',
-              fontFamily: '"Noto Sans KR", sans-serif',
-              letterSpacing: '-0.3px',
-              textAlign: 'center'
-            }}>
+      {/* 교회 슬로건 풀배너 */}
+      <Reveal>
+        <div style={{
+          background: 'var(--primary-dk)', padding: '22px 24px',
+          display: 'flex', alignItems: 'center', gap: '16px',
+        }}>
+          <div style={{
+            width: '2px', height: '48px', flexShrink: 0,
+            background: 'linear-gradient(to bottom, rgba(255,255,255,0.6), rgba(255,255,255,0.1))',
+            borderRadius: '2px',
+          }} />
+          <div>
+            <p style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', letterSpacing: '2px', marginBottom: '5px' }}>
+              CHURCH MOTTO
+            </p>
+            <p style={{ fontSize: '1.05rem', fontWeight: '800', color: '#fff', lineHeight: 1.45, wordBreak: 'keep-all' }}>
               "당신은 이미 소중합니다"
-            </h3>
-            <p style={{
-              fontSize: '0.88rem',
-              color: 'var(--text)',
-              lineHeight: '1.85',
-              margin: '0 0 16px',
-              wordBreak: 'keep-all',
-              textAlign: 'justify'
-            }}>
-              세상은 우리에게 자꾸만 증명하라고 말합니다. 더 유능해야 하고, 더 가져야 하고, 더 완벽해야 한다고 말이죠. 하지만 우리 교회가 믿음으로 고백하는 예수님은 다르게 말씀하셨습니다. <strong style={{ color: 'var(--primary-dk)' }}>"너는 존재 자체로 이미 소중하단다"</strong>라고요.
             </p>
-            <p style={{
-              fontSize: '0.88rem',
-              color: 'var(--text)',
-              lineHeight: '1.85',
-              margin: '0 0 16px',
-              wordBreak: 'keep-all',
-              textAlign: 'justify'
-            }}>
-              사랑의교회는 세상의 평가에 상처받은 마음이 치유되고, 내가 얼마나 사랑받는 존재인지 다시 깨닫는 회복의 공간입니다. 잘나지 않아도, 무언가를 이루지 못했어도 당신은 그 자체로 빛나는 사람입니다.
-            </p>
-            <p style={{
-              fontSize: '0.88rem',
-              color: 'var(--text)',
-              lineHeight: '1.85',
-              margin: '0 0 18px',
-              wordBreak: 'keep-all',
-              textAlign: 'justify'
-            }}>
-              그 변함없는 사랑을 이곳에서 함께 누렸으면 좋겠습니다. 당신의 깨어진 마음을 만지시고 다시 일으켜 세우실 하나님의 사랑, 그 따뜻한 품으로 당신을 초대합니다.
-            </p>
-            
-            {/* 기장 교단 설명 카드 */}
-            <div style={{
-              background: 'var(--surface)',
-              borderRadius: '12px',
-              padding: '14px 16px',
-              borderLeft: '4px solid #B09880',
-              marginTop: '10px'
-            }}>
-              <p style={{
-                fontSize: '0.8rem',
-                fontWeight: '700',
-                color: '#8A7055',
-                marginBottom: '4px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px'
-              }}>
-                <i className="fas fa-info-circle" /> 소속 교단 안내
-              </p>
-              <p style={{
-                fontSize: '0.8rem',
-                color: 'var(--text-sub)',
-                lineHeight: '1.6',
-                margin: 0,
-                wordBreak: 'keep-all'
-              }}>
-                사랑의교회가 속한 <strong>한국기독교장로회(기장)</strong>는 예수 그리스도의 복음을 세상에 전하며, 더불어 우리 이웃과 사회 속에서 온전히 실천하고자 노력해 온 건강하고 따뜻한 교단입니다.
-              </p>
-            </div>
           </div>
         </div>
+      </Reveal>
 
-        {/* 2. 섬기는 사람들 섹션 */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' }}>
-          <div className="page-section-title" style={{ marginBottom: 0 }}>섬기는 사람들</div>
-          
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '12px'
-          }}>
-            {[
-              { role: '담임목사', name: '김윤범', desc: '예수님의 마음을 전하는 목자', icon: 'fa-user-tie', bg: '#F9F6F0', color: '#8A7055' },
-              { role: '원로목사', name: '성양권', desc: '우리 교회의 주춧돌과 같은 목자', icon: 'fa-user-shield', bg: '#F1F5F9', color: '#475569' },
-              { role: '시무장로', name: '육근현', desc: '교회의 화평과 질서를 세우는 목자', icon: 'fa-user-check', bg: '#ECFDF5', color: '#059669' },
-              { role: '전도사/센터장', name: '허진영', desc: '아이들의 꿈을 함께 가꾸는 목자', icon: 'fa-child-reaching', bg: '#FEF3C7', color: '#D97706' }
-            ].map((person, idx) => (
-              <div key={idx} style={{
-                background: person.bg,
-                padding: '16px 18px',
-                borderRadius: 'var(--r)',
-                border: '1px solid rgba(0,0,0,0.02)',
-                boxShadow: 'var(--shadow-sm)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '16px'
-              }}>
-                <div style={{
-                  width: '46px', height: '46px',
-                  borderRadius: '12px',
-                  background: '#ffffff',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: person.color,
-                  fontSize: '1.2rem',
-                  boxShadow: '0 2px 8px rgba(93,64,55,0.06)',
-                  flexShrink: 0
-                }}>
-                  <i className={`fas ${person.icon}`} />
-                </div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', marginBottom: '3px' }}>
-                    <span style={{
-                      fontSize: '0.72rem',
-                      fontWeight: '700',
-                      color: person.color,
-                      letterSpacing: '0.3px'
-                    }}>
-                      {person.role}
-                    </span>
-                    <h4 style={{
-                      fontSize: '0.98rem',
-                      fontWeight: '700',
-                      color: 'var(--text)',
-                      margin: 0
-                    }}>
-                      {person.name}
-                    </h4>
-                  </div>
-                  <p style={{
-                    fontSize: '0.8rem',
-                    color: 'var(--text-sub)',
-                    lineHeight: '1.45',
-                    margin: 0,
-                    wordBreak: 'keep-all'
-                  }}>
-                    {person.desc}
-                  </p>
-                </div>
+      <div style={{ padding: '28px 16px', display: 'flex', flexDirection: 'column', gap: '36px' }}>
+
+        {/* 교회 소개 */}
+        <section>
+          <Reveal>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: '900', color: 'var(--primary-dk)', letterSpacing: '-0.5px', marginBottom: '14px' }}>
+              교회 소개
+            </h2>
+          </Reveal>
+          <Reveal delay={80}>
+            <div style={{
+              background: '#fff', borderRadius: 'var(--r)',
+              boxShadow: '0 4px 24px rgba(93,64,55,0.09)',
+              overflow: 'hidden',
+            }}>
+              <div style={{ padding: '22px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                <p style={{ fontSize: '0.9rem', color: '#333', lineHeight: 1.9, wordBreak: 'keep-all' }}>
+                  세상은 우리에게 자꾸만 증명하라고 말합니다. 하지만 예수님은 다르게 말씀하셨습니다.{' '}
+                  <strong style={{ color: 'var(--primary-dk)' }}>"너는 존재 자체로 이미 소중하단다"</strong>라고요.
+                </p>
+                <p style={{ fontSize: '0.9rem', color: '#333', lineHeight: 1.9, wordBreak: 'keep-all' }}>
+                  사랑의교회는 상처받은 마음이 치유되고, 내가 얼마나 사랑받는 존재인지 다시 깨닫는 회복의 공간입니다.
+                </p>
               </div>
+              <div style={{
+                margin: '0 22px 22px',
+                padding: '14px 16px', borderRadius: '10px',
+                background: 'var(--surface)', borderLeft: '3px solid var(--primary-lt)',
+              }}>
+                <p style={{ fontSize: '0.73rem', fontWeight: '700', color: 'var(--primary)', marginBottom: '4px' }}>소속 교단</p>
+                <p style={{ fontSize: '0.82rem', color: 'var(--text-sub)', lineHeight: 1.6, wordBreak: 'keep-all' }}>
+                  <strong>한국기독교장로회(기장)</strong> — 복음과 이웃 사랑을 함께 실천하는 교단입니다.
+                </p>
+              </div>
+            </div>
+          </Reveal>
+        </section>
+
+        {/* 섬기는 사람들 */}
+        <section>
+          <Reveal>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: '900', color: 'var(--primary-dk)', letterSpacing: '-0.5px', marginBottom: '14px' }}>
+              섬기는 사람들
+            </h2>
+          </Reveal>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            {STAFF.map((p, i) => (
+              <Reveal key={i} delay={i * 60}>
+                <div style={{
+                  background: '#fff', borderRadius: 'var(--r-sm)',
+                  boxShadow: '0 2px 12px rgba(93,64,55,0.07)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  padding: '16px 20px',
+                  borderLeft: `3px solid ${p.color}`,
+                  transition: 'transform 0.2s, box-shadow 0.2s',
+                }}>
+                  <span style={{ fontSize: '0.82rem', color: '#888' }}>{p.role}</span>
+                  <span style={{ fontSize: '1.05rem', fontWeight: '800', color: '#1a1a1a', letterSpacing: '-0.3px' }}>
+                    {p.name}
+                  </span>
+                </div>
+              </Reveal>
             ))}
           </div>
-        </div>
+        </section>
 
-        {/* 3. 사랑의지역아동센터 섹션 */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' }}>
-          <div className="page-section-title" style={{ marginBottom: 0 }}>지역 아동 복지</div>
-          
-          <div style={{
-            background: 'linear-gradient(135deg, #FFFDF9 0%, #FEF8EC 100%)',
-            border: '1px dashed #F5D3A6',
-            borderRadius: 'var(--r)',
-            padding: '20px',
-            boxShadow: 'var(--shadow-xs)',
-            position: 'relative',
-            overflow: 'hidden'
-          }}>
-            {/* 배경 미세 장식 아이콘 */}
-            <i className="fas fa-hands-holding-child" style={{
-              position: 'absolute', bottom: '-15px', right: '-10px',
-              fontSize: '4.5rem', color: '#FCECD3', opacity: 0.35,
-              pointerEvents: 'none'
-            }} />
-            
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-              <span style={{
-                background: '#FFF3E0',
-                color: '#E65100',
-                width: '32px', height: '32px',
-                borderRadius: '8px',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: '1rem', flexShrink: 0
-              }}>
-                <i className="fas fa-heart-pulse" />
-              </span>
-              <h3 style={{
-                fontSize: '1.05rem',
-                fontWeight: '800',
-                color: '#D84315',
-                margin: 0,
-                letterSpacing: '-0.2px'
-              }}>
-                사랑의지역아동센터
-              </h3>
-            </div>
-            
-            <p style={{
-              fontSize: '0.82rem',
-              color: 'var(--text)',
-              lineHeight: '1.7',
-              margin: '0 0 14px',
-              wordBreak: 'keep-all',
-              textAlign: 'justify'
-            }}>
-              방과 후 돌봄과 배움이 필요한 지역사회의 아동들을 위해 안전하고 건강한 보살핌을 제공하는 따뜻한 공간입니다. 전문적인 학습 지도와 더불어 균형 잡힌 정서 지원, 다채로운 문화 체험을 통해 아이들의 무한한 꿈과 밝은 미래를 함께 키워 나갑니다.
-            </p>
-            
+        {/* 지역아동센터 */}
+        <section>
+          <Reveal>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: '900', color: 'var(--primary-dk)', letterSpacing: '-0.5px', marginBottom: '14px' }}>
+              지역 아동 복지
+            </h2>
+          </Reveal>
+          <Reveal delay={80}>
             <div style={{
-              background: 'rgba(255, 255, 255, 0.7)',
-              borderRadius: '8px',
-              padding: '10px 12px',
-              border: '1px solid rgba(230,81,0,0.06)'
+              background: '#fff', borderRadius: 'var(--r)',
+              boxShadow: '0 4px 24px rgba(93,64,55,0.09)', overflow: 'hidden',
             }}>
-              <ul style={{
-                listStyle: 'none',
-                padding: 0,
-                margin: 0,
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '5px'
+              <div style={{
+                background: 'linear-gradient(135deg, #BF360C, #E64A19)',
+                padding: '18px 22px',
               }}>
-                <li style={{ fontSize: '0.78rem', color: 'var(--text-sub)', display: 'flex', gap: '6px' }}>
-                  <strong style={{ color: '#E65100', flexShrink: 0 }}>• 시설 구분:</strong>
-                  <span>지역아동 복지시설 (방과후 돌봄)</span>
-                </li>
-                <li style={{ fontSize: '0.78rem', color: 'var(--text-sub)', display: 'flex', gap: '6px' }}>
-                  <strong style={{ color: '#E65100', flexShrink: 0 }}>• 센터장:</strong>
-                  <span>허진영 전도사</span>
-                </li>
-                <li style={{ fontSize: '0.78rem', color: 'var(--text-sub)', display: 'flex', gap: '6px' }}>
-                  <strong style={{ color: '#E65100', flexShrink: 0 }}>• 주요 혜택:</strong>
-                  <span>학습 지원, 급식 지도, 정서 케어, 예체능 및 특별활동 제공</span>
-                </li>
-              </ul>
+                <p style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.55)', letterSpacing: '2px', marginBottom: '5px' }}>
+                  COMMUNITY WELFARE
+                </p>
+                <p style={{ fontSize: '1.05rem', fontWeight: '800', color: '#fff' }}>
+                  사랑의지역아동센터
+                </p>
+              </div>
+              <div style={{ padding: '18px 22px 0' }}>
+                <p style={{ fontSize: '0.88rem', color: '#444', lineHeight: 1.8, wordBreak: 'keep-all', marginBottom: '16px' }}>
+                  방과 후 돌봄이 필요한 지역 아동들에게 학습 지원, 급식, 정서 케어, 문화 체험을 제공하는 따뜻한 공간입니다.
+                </p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingBottom: '18px' }}>
+                  {[
+                    ['시설 구분', '지역아동 복지시설 (방과후 돌봄)'],
+                    ['센터장', '허진영 전도사'],
+                  ].map(([label, value]) => (
+                    <div key={label} style={{ display: 'flex', gap: '12px' }}>
+                      <span style={{ fontSize: '0.73rem', fontWeight: '700', color: '#E64A19', width: '60px', flexShrink: 0 }}>{label}</span>
+                      <span style={{ fontSize: '0.84rem', color: '#555' }}>{value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <CenterMap />
             </div>
-          </div>
-        </div>
+          </Reveal>
+        </section>
 
-        {/* 4. 목사 이력 및 인사말 (기존 정보 유지) */}
-        {history ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
-            <div className="page-section-title" style={{ marginBottom: 0 }}>목사 이력</div>
-            <div className="card">
-              <p style={{ fontSize: '0.88rem', color: 'var(--text-sub)', lineHeight: '1.9', whiteSpace: 'pre-wrap' }}>
-                {history}
-              </p>
-            </div>
-          </div>
-        ) : null}
+        {/* 목사 이력 */}
+        {history && (
+          <section>
+            <Reveal>
+              <h2 style={{ fontSize: '1.5rem', fontWeight: '900', color: 'var(--primary-dk)', letterSpacing: '-0.5px', marginBottom: '14px' }}>
+                목사 이력
+              </h2>
+            </Reveal>
+            <Reveal delay={60}>
+              <div style={{ background: '#fff', borderRadius: 'var(--r)', boxShadow: '0 4px 24px rgba(93,64,55,0.09)', overflow: 'hidden' }}>
+                <button onClick={() => setHistoryOpen(v => !v)} style={{
+                  width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                  padding: '18px 22px', background: 'none', border: 'none', cursor: 'pointer',
+                  fontSize: '0.92rem', fontWeight: '700', color: 'var(--text)',
+                }}>
+                  <span>이력 보기</span>
+                  <i className={`fas fa-chevron-${historyOpen ? 'up' : 'down'}`} style={{ fontSize: '0.75rem', color: '#bbb' }} />
+                </button>
+                {historyOpen && (
+                  <div style={{ padding: '0 22px 20px', borderTop: '1px solid #F0EAE2' }}>
+                    <p style={{ fontSize: '0.88rem', color: '#555', lineHeight: 1.9, whiteSpace: 'pre-wrap', paddingTop: '16px' }}>{history}</p>
+                  </div>
+                )}
+              </div>
+            </Reveal>
+          </section>
+        )}
 
-        {text ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
-            <div className="page-section-title" style={{ marginBottom: 0 }}>담임목사 인사말</div>
-            <div className="card" style={{
-              borderLeft: '3px solid var(--primary)',
-              borderRadius: '0 var(--r) var(--r) 0',
-            }}>
-              <p style={{ fontSize: '0.9rem', color: 'var(--text-sub)', lineHeight: '1.9', whiteSpace: 'pre-wrap' }}>
-                {text}
-              </p>
-            </div>
-          </div>
-        ) : null}
+        {/* 담임목사 인사말 */}
+        {text && (
+          <section>
+            <Reveal>
+              <h2 style={{ fontSize: '1.5rem', fontWeight: '900', color: 'var(--primary-dk)', letterSpacing: '-0.5px', marginBottom: '14px' }}>
+                담임목사 인사말
+              </h2>
+            </Reveal>
+            <Reveal delay={60}>
+              <div style={{ background: '#fff', borderRadius: 'var(--r)', boxShadow: '0 4px 24px rgba(93,64,55,0.09)', overflow: 'hidden' }}>
+                <button onClick={() => setGreetingOpen(v => !v)} style={{
+                  width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                  padding: '18px 22px', background: 'none', border: 'none', cursor: 'pointer',
+                  fontSize: '0.92rem', fontWeight: '700', color: 'var(--text)',
+                }}>
+                  <span>인사말 보기</span>
+                  <i className={`fas fa-chevron-${greetingOpen ? 'up' : 'down'}`} style={{ fontSize: '0.75rem', color: '#bbb' }} />
+                </button>
+                {greetingOpen && (
+                  <div style={{ padding: '0 22px 20px', borderTop: '3px solid var(--primary)' }}>
+                    <p style={{ fontSize: '0.88rem', color: '#555', lineHeight: 1.9, whiteSpace: 'pre-wrap', paddingTop: '16px' }}>{text}</p>
+                  </div>
+                )}
+              </div>
+            </Reveal>
+          </section>
+        )}
 
       </div>
     </div>

@@ -1,80 +1,143 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+
+const CHURCH_LAT = 37.4936;
+const CHURCH_LNG = 126.7794;
+const CHURCH_ADDRESS = '경기 부천시 원미구 장말로187번길 30';
+const CHURCH_PHONE = '032-651-1690';
+const CHURCH_NAME = '사랑의교회';
+
+const CopyButton = ({ text }) => {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  return (
+    <button
+      onClick={handleCopy}
+      style={{
+        marginLeft: 'auto',
+        flexShrink: 0,
+        padding: '4px 10px',
+        background: copied ? 'var(--primary)' : 'var(--surface)',
+        color: copied ? '#fff' : 'var(--text-sub)',
+        border: '1px solid var(--border)',
+        borderRadius: 'var(--r-sm)',
+        fontSize: '12px',
+        fontWeight: '600',
+        cursor: 'pointer',
+        transition: 'all 0.2s',
+        whiteSpace: 'nowrap',
+      }}
+    >
+      {copied ? '복사됨' : '복사'}
+    </button>
+  );
+};
 
 const Location = () => {
   const mapRef = useRef(null);
+  const mapInstance = useRef(null);
 
   useEffect(() => {
-    const timestamp = '1780733184090';
-    const key = 'p34g49qyjjk';
-    const scriptId = 'daum-map-loader';
-
     const renderMap = () => {
-      if (window.daum?.roughmap && mapRef.current) {
-        // 기존 렌더링 영역 비우기
-        mapRef.current.innerHTML = '';
-        
-        // 중요: React DOM이 완전히 렌더링되어 메인 문서에 부착된 이후에
-        // 카카오맵 렌더러가 getElementById를 찾을 수 있도록 마이크로 태스크 딜레이(50ms)를 적용합니다.
-        // 이 조치가 새로고침 없이 탭을 이동했을 때 지도가 즉시 로드되지 않던 버그를 완전히 해결합니다.
-        setTimeout(() => {
-          try {
-            new window.daum.roughmap.Lander({
-              timestamp: timestamp,
-              key: key,
-              mapWidth: '100%',
-              mapHeight: '260',
-            }).render();
-          } catch (err) {
-            console.error('카카오맵 렌더링 실패:', err);
-          }
-        }, 50);
-      }
+      if (!mapRef.current) return;
+
+      const center = new window.kakao.maps.LatLng(CHURCH_LAT, CHURCH_LNG);
+
+      const map = new window.kakao.maps.Map(mapRef.current, {
+        center,
+        level: 3,
+      });
+      mapInstance.current = map;
+
+      const marker = new window.kakao.maps.Marker({ position: center, map });
+
+      const infowindow = new window.kakao.maps.InfoWindow({
+        content: `<div style="padding:6px 10px;font-size:13px;font-weight:600;white-space:nowrap;">${CHURCH_NAME}</div>`,
+        removable: false,
+      });
+      infowindow.open(map, marker);
     };
 
-    let script = document.getElementById(scriptId);
-    if (!script) {
-      script = document.createElement('script');
-      script.id = scriptId;
-      script.src = 'https://ssl.daumcdn.net/dmaps/map_js_init/roughmapLoader.js';
-      script.charset = 'UTF-8';
-      script.className = 'daum_roughmap_loader_script';
-      script.onload = renderMap;
-      document.head.appendChild(script);
+    if (window.kakao?.maps) {
+      window.kakao.maps.load(renderMap);
     } else {
-      renderMap();
+      const script = document.querySelector('script[src*="dapi.kakao.com"]');
+      if (script) {
+        const onLoad = () => window.kakao.maps.load(renderMap);
+        script.addEventListener('load', onLoad);
+        return () => script.removeEventListener('load', onLoad);
+      }
     }
   }, []);
+
+  const openKakaoMap = () => {
+    window.open(
+      `https://map.kakao.com/link/map/${CHURCH_NAME},${CHURCH_LAT},${CHURCH_LNG}`,
+      '_blank'
+    );
+  };
 
   return (
     <div className="page">
       <div className="page-body">
-        {/* 지도가 그려지는 영역 */}
-        <div className="map-wrap" style={{ minHeight: '260px', background: 'var(--surface)' }}>
-          <div
-            id="daumRoughmapContainer1780733184090"
-            ref={mapRef}
-            className="root_daum_roughmap root_daum_roughmap_landing"
-            style={{ width: '100%' }}
-          />
+        {/* 지도 영역 */}
+        <div
+          ref={mapRef}
+          style={{
+            width: '100%',
+            height: '260px',
+            borderRadius: 'var(--r)',
+            overflow: 'hidden',
+            background: 'var(--surface)',
+          }}
+        />
+
+        {/* 버튼 */}
+        <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
+          <button
+            onClick={openKakaoMap}
+            style={{
+              flex: 1,
+              padding: '10px',
+              background: '#FEE500',
+              color: '#3C1E1E',
+              border: 'none',
+              borderRadius: 'var(--r-sm)',
+              fontWeight: '600',
+              fontSize: '14px',
+              cursor: 'pointer',
+            }}
+          >
+            카카오맵에서 보기
+          </button>
         </div>
 
-        <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
-          <div className="location-info-row">
+        {/* 주소 / 연락처 */}
+        <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '0', marginTop: '12px' }}>
+          <div className="location-info-row" style={{ alignItems: 'center' }}>
             <span className="location-icon"><i className="fas fa-map-marker-alt" /></span>
-            <span>
+            <span style={{ flex: 1 }}>
               <div className="location-text-label">주소</div>
-              <div className="location-text-val">경기 부천시 원미구 장말로187번길 30</div>
+              <div className="location-text-val">{CHURCH_ADDRESS}</div>
             </span>
+            <CopyButton text={CHURCH_ADDRESS} />
           </div>
           <div className="location-divider" />
-          <div className="location-info-row">
+          <div className="location-info-row" style={{ alignItems: 'center' }}>
             <span className="location-icon"><i className="fas fa-phone" /></span>
-            <span>
+            <span style={{ flex: 1 }}>
               <div className="location-text-label">연락처</div>
-              <a href="tel:032-651-1690" className="location-text-val" style={{ textDecoration: 'none', color: 'inherit' }}>
-                032-651-1690
+              <a href={`tel:${CHURCH_PHONE}`} className="location-text-val" style={{ textDecoration: 'none', color: 'inherit' }}>
+                {CHURCH_PHONE}
               </a>
             </span>
+            <CopyButton text={CHURCH_PHONE} />
           </div>
         </div>
       </div>

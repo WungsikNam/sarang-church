@@ -1,6 +1,7 @@
 const tabs = [
-  { id: 'home',  icon: 'fas fa-home',       label: '홈' },
-  { id: 'menu',  icon: 'fas fa-th',          label: '더보기' },
+  { id: 'home',          icon: 'fas fa-home',        label: '홈' },
+  { id: 'service',       icon: 'fas fa-calendar-alt', label: '예배안내' },
+  { id: 'announcements', icon: 'fas fa-bullhorn',     label: '공지사항' },
 ];
 
 const BottomNav = ({ current, navigateTo }) => (

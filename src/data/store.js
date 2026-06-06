@@ -12,11 +12,12 @@ const defaults = {
   announcements: [],
   bulletin: { title: '2026년 4월 19일 주보', url: '/bulletin.pdf' },
   services: [
-    { id: 1, name: '주일 예배',      time: '11:00', place: '본당' },
-    { id: 2, name: '주일 학생 예배', time: '13:30', place: '본당' },
-    { id: 3, name: '수요예배',       time: '00:00', place: '본당' },
-    { id: 4, name: '금요예배',       time: '00:00', place: '본당' },
-    { id: 5, name: '아침기도',       time: '00:00', place: '본당' },
+    { id: 1, name: '주일 예배',              time: '11:00', place: '본당' },
+    { id: 2, name: '영유아부 예배',          time: '11:00', place: '교육관' },
+    { id: 3, name: '학생회 예배 (중고등)',   time: '13:30', place: '본당' },
+    { id: 4, name: '수요예배',               time: '20:00', place: '본당' },
+    { id: 5, name: '금요예배',               time: '20:00', place: '본당' },
+    { id: 6, name: '아침 말씀 산책',          time: '06:00', place: '본당' },
   ],
   congregation: [],
   hero: {

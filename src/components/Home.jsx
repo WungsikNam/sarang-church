@@ -52,60 +52,58 @@ const Home = ({ navigateTo }) => {
       {/* 교회 표어 섹션 */}
       <div style={{
         margin: '0 16px 16px',
-        padding: '18px 20px',
-        background: 'linear-gradient(135deg, #FBF8F3 0%, #F5EFEB 100%)',
-        border: '1px solid #EADFD5',
         borderRadius: 'var(--r)',
-        boxShadow: 'var(--shadow-xs)',
-        textAlign: 'center',
-        position: 'relative',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        boxShadow: 'var(--shadow)',
       }}>
-        {/* 장식용 따옴표 아이콘 */}
-        <i className="fas fa-quote-left" style={{
-          position: 'absolute', top: '10px', left: '12px',
-          fontSize: '2.5rem', color: '#E5D6C8', opacity: 0.35,
-          pointerEvents: 'none'
-        }} />
-        <i className="fas fa-quote-right" style={{
-          position: 'absolute', bottom: '10px', right: '12px',
-          fontSize: '2.5rem', color: '#E5D6C8', opacity: 0.35,
-          pointerEvents: 'none'
-        }} />
+        {/* 상단 배너 */}
+        <div style={{
+          background: 'linear-gradient(135deg, var(--primary-dk) 0%, var(--primary) 100%)',
+          padding: '20px 20px 16px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+        }}>
+          <div style={{
+            width: '36px', height: '36px', flexShrink: 0,
+            background: 'rgba(255,255,255,0.15)',
+            borderRadius: '50%',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <i className="fas fa-cross" style={{ color: '#fff', fontSize: '0.95rem' }} />
+          </div>
+          <div>
+            <p style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.65)', letterSpacing: '1.5px', fontWeight: '600', marginBottom: '2px' }}>
+              2026 교회 표어
+            </p>
+            <p style={{ fontSize: '0.95rem', fontWeight: '700', color: '#fff', lineHeight: '1.4', wordBreak: 'keep-all' }}>
+              하늘에 계신 내 아버지의 뜻을 행하는 사람들
+            </p>
+          </div>
+        </div>
 
-        <p style={{
-          fontSize: '0.8rem',
-          fontWeight: '700',
-          color: '#B08E6B',
-          letterSpacing: '1px',
-          textTransform: 'uppercase',
-          marginBottom: '6px'
+        {/* 하단 설명 */}
+        <div style={{
+          background: '#fff',
+          padding: '14px 20px',
+          display: 'flex',
+          gap: '12px',
+          alignItems: 'flex-start',
         }}>
-          교회 표어
-        </p>
-        <h4 style={{
-          fontSize: '1.05rem',
-          fontWeight: '700',
-          color: 'var(--primary-dk)',
-          lineHeight: '1.45',
-          fontFamily: '"Noto Sans KR", sans-serif',
-          margin: '0 0 10px',
-          wordBreak: 'keep-all'
-        }}>
-          "하늘에 계신 내 아버지의 뜻을 행하는 사람들"
-          <span style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-hint)', marginTop: '2px', fontWeight: '500' }}>
-            (마태복음 7:21)
-          </span>
-        </h4>
-        <p style={{
-          fontSize: '0.82rem',
-          color: 'var(--text-sub)',
-          lineHeight: '1.6',
-          margin: 0,
-          wordBreak: 'keep-all'
-        }}>
-          나와 우리 안에 인격적으로 임재하시는 하나님의 마음을 따라 그분의 뜻을 행하는 사람들이 되고자 합니다.
-        </p>
+          <div style={{
+            width: '3px', flexShrink: 0, alignSelf: 'stretch',
+            background: 'var(--primary-lt)',
+            borderRadius: '4px',
+          }} />
+          <div>
+            <p style={{ fontSize: '0.78rem', color: 'var(--primary)', fontWeight: '700', marginBottom: '4px' }}>
+              마태복음 7:21
+            </p>
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-sub)', lineHeight: '1.65', wordBreak: 'keep-all' }}>
+              나와 우리 안에 인격적으로 임재하시는 하나님의 마음을 따라 그분의 뜻을 행하는 사람들이 되고자 합니다.
+            </p>
+          </div>
+        </div>
       </div>
 
       <div className="quick-grid">
