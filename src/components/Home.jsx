@@ -74,10 +74,11 @@ const Home = ({ navigateTo }) => {
           </div>
           <div>
             <p style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.65)', letterSpacing: '1.5px', fontWeight: '600', marginBottom: '2px' }}>
-              2026 교회 표어
+              2026년 사랑의교회 표어
             </p>
             <p style={{ fontSize: '0.95rem', fontWeight: '700', color: '#fff', lineHeight: '1.4', wordBreak: 'keep-all' }}>
-              하늘에 계신 내 아버지의 뜻을 행하는 사람들
+              하늘에 계신 내 아버지의 뜻을 행하는 사람들{' '}
+              <span style={{ fontSize: '0.78rem', fontWeight: '500', color: 'rgba(255,255,255,0.7)' }}>마7:21</span>
             </p>
           </div>
         </div>
@@ -96,9 +97,6 @@ const Home = ({ navigateTo }) => {
             borderRadius: '4px',
           }} />
           <div>
-            <p style={{ fontSize: '0.78rem', color: 'var(--primary)', fontWeight: '700', marginBottom: '4px' }}>
-              마태복음 7:21
-            </p>
             <p style={{ fontSize: '0.82rem', color: 'var(--text-sub)', lineHeight: '1.65', wordBreak: 'keep-all' }}>
               나와 우리 안에 인격적으로 임재하시는 하나님의 마음을 따라 그분의 뜻을 행하는 사람들이 되고자 합니다.
             </p>
