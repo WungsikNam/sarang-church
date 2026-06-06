@@ -23,7 +23,13 @@ const Header = ({ currentPage, navigateTo }) => {
         {!isHome && (
           <div
             className="header-back"
-            onClick={() => navigateTo(isTopLevel ? 'home' : 'menu')}
+            onClick={() => {
+              if (window.history.length > 1) {
+                window.history.back();
+              } else {
+                navigateTo('home');
+              }
+            }}
           >
             <i className="fas fa-chevron-left" />
           </div>

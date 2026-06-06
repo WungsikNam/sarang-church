@@ -38,7 +38,7 @@ const StoreContext = createContext();
 export function StoreProvider({ children }) {
   const cached = readCache();
   const [store, setStore] = useState(cached ?? defaults);
-  const [loading, setLoading] = useState(!cached); // 캐시 있으면 로딩 없음
+  const [loading, setLoading] = useState(false); // 로딩 화면 없이 캐시/기본값으로 즉시 렌더링하고 백그라운드 동기화
 
   useEffect(() => {
     Promise.all(KEYS.map(key => loadDoc(key).then(val => [key, val])))

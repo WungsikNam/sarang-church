@@ -42,7 +42,7 @@ const Offering = () => {
             헌금 안내
           </p>
           <p>헌금 시 예금주명 뒤에 성함을 함께 기재해 주시면 감사하겠습니다.</p>
-          <p style={{ marginTop: '6px' }}>문의: 032-651-1691</p>
+          <p style={{ marginTop: '6px' }}>문의: 032-651-1690</p>
         </div>
       </div>
     </div>

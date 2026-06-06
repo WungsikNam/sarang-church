@@ -1,13 +1,12 @@
 import { useStore } from '../data/StoreContext';
 
 const menuItems = [
-  { id: 'announcements', icon: 'fas fa-bullhorn',       label: '공지사항' },
-  { id: 'service',       icon: 'fas fa-calendar-alt',   label: '예배안내' },
-  { id: 'bulletin',      icon: 'fas fa-book-open',      label: '주보' },
-  { id: 'media',         icon: 'fas fa-play-circle',    label: '미디어' },
   { id: 'info',          icon: 'fas fa-church',         label: '교회안내' },
-  { id: 'congregation',  icon: 'fas fa-users',          label: '신도회' },
+  { id: 'service',       icon: 'fas fa-calendar-alt',   label: '예배안내' },
   { id: 'location',      icon: 'fas fa-map-marker-alt', label: '오시는 길' },
+  { id: 'announcements', icon: 'fas fa-bullhorn',       label: '공지사항' },
+  { id: 'congregation',  icon: 'fas fa-users',          label: '신도회' },
+  { id: 'bulletin',      icon: 'fas fa-book-open',      label: '주보' },
 ];
 
 const Home = ({ navigateTo }) => {
@@ -49,6 +48,65 @@ const Home = ({ navigateTo }) => {
         </span>
         <i className="fas fa-chevron-right" style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.8rem' }} />
       </a>
+
+      {/* 교회 표어 섹션 */}
+      <div style={{
+        margin: '0 16px 16px',
+        padding: '18px 20px',
+        background: 'linear-gradient(135deg, #FBF8F3 0%, #F5EFEB 100%)',
+        border: '1px solid #EADFD5',
+        borderRadius: 'var(--r)',
+        boxShadow: 'var(--shadow-xs)',
+        textAlign: 'center',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        {/* 장식용 따옴표 아이콘 */}
+        <i className="fas fa-quote-left" style={{
+          position: 'absolute', top: '10px', left: '12px',
+          fontSize: '2.5rem', color: '#E5D6C8', opacity: 0.35,
+          pointerEvents: 'none'
+        }} />
+        <i className="fas fa-quote-right" style={{
+          position: 'absolute', bottom: '10px', right: '12px',
+          fontSize: '2.5rem', color: '#E5D6C8', opacity: 0.35,
+          pointerEvents: 'none'
+        }} />
+
+        <p style={{
+          fontSize: '0.8rem',
+          fontWeight: '700',
+          color: '#B08E6B',
+          letterSpacing: '1px',
+          textTransform: 'uppercase',
+          marginBottom: '6px'
+        }}>
+          교회 표어
+        </p>
+        <h4 style={{
+          fontSize: '1.05rem',
+          fontWeight: '700',
+          color: 'var(--primary-dk)',
+          lineHeight: '1.45',
+          fontFamily: '"Noto Sans KR", sans-serif',
+          margin: '0 0 10px',
+          wordBreak: 'keep-all'
+        }}>
+          "하늘에 계신 내 아버지의 뜻을 행하는 사람들"
+          <span style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-hint)', marginTop: '2px', fontWeight: '500' }}>
+            (마태복음 7:21)
+          </span>
+        </h4>
+        <p style={{
+          fontSize: '0.82rem',
+          color: 'var(--text-sub)',
+          lineHeight: '1.6',
+          margin: 0,
+          wordBreak: 'keep-all'
+        }}>
+          나와 우리 안에 인격적으로 임재하시는 하나님의 마음을 따라 그분의 뜻을 행하는 사람들이 되고자 합니다.
+        </p>
+      </div>
 
       <div className="quick-grid">
         {menuItems.map(item => (

@@ -1,6 +1,5 @@
 const tabs = [
   { id: 'home',  icon: 'fas fa-home',       label: '홈' },
-  { id: 'media', icon: 'fas fa-play-circle', label: '미디어' },
   { id: 'menu',  icon: 'fas fa-th',          label: '더보기' },
 ];
 
