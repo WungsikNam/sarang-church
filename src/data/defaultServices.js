@@ -5,7 +5,7 @@ export const DEFAULT_SERVICES = [
   { id: 3, name: '청년회',           day: '주일',  time: '12:20', place: '청년회실 (1층)' },
   { id: 4, name: '학생회 예배',      day: '주일',  time: '13:30', place: '대예배실' },
   { id: 5, name: '아침 기도회',      day: '화~금', time: '06:00', place: '대예배실' },
-  { id: 6, name: '수요 기도회',      day: '수',    time: '19:00', place: '대예배실' },
+  { id: 6, name: '수요 말씀산책',    day: '수',    time: '19:00', place: '대예배실' },
   { id: 7, name: '금요 찬양기도회',  day: '금',    time: '20:30', place: '대예배실' },
 ];
 
