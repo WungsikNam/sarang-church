@@ -10,22 +10,20 @@ const Congregation = () => {
     <div className="page">
       <div className="page-body">
         {list.length === 0 ? (
-          <div className="cong-empty">
-            <i className="fas fa-users" />
-            등록된 신도회가 없습니다.
+          <div className="empty-state">
+            <span className="empty-state-icon"><i className="fas fa-users" /></span>
+            <p className="empty-state-title">등록된 신도회가 없습니다</p>
+            <p className="empty-state-sub">신도회 소개가 등록되면 이곳에 표시됩니다</p>
           </div>
         ) : (
-          <div className="cong-list">
+          <div className="group-list">
             {list.map((item, i) => (
-              <div key={item.id} className="cong-card">
-                <span className="cong-avatar"><i className={iconList[i % iconList.length]} /></span>
-                <span className="cong-body">
-                  <span className="cong-name">{item.name}</span>
+              <div key={item.id} className="group-row cong-row">
+                <span className="row-icon"><i className={iconList[i % iconList.length]} /></span>
+                <span className="row-body">
+                  <span className="row-title">{item.name}</span>
                   {item.leader && (
-                    <span className="cong-leader">
-                      <i className="fas fa-user" style={{ fontSize: '0.65rem', marginRight: '3px' }} />
-                      {item.leader}
-                    </span>
+                    <span className="cong-leader"><i className="fas fa-user" />{item.leader}</span>
                   )}
                   {item.description && <span className="cong-desc">{item.description}</span>}
                 </span>

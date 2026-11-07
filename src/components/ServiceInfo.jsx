@@ -7,25 +7,22 @@ const ServiceInfo = () => {
   return (
     <div className="page">
       <div className="page-body">
-        <div className="service-list">
+        <header className="page-intro">
+          <span className="page-intro-eyebrow">WORSHIP</span>
+          <h2 className="page-intro-title">예배 시간 안내</h2>
+        </header>
+
+        <div className="group-list">
           {services.map((s) => (
-            <div key={s.id} className="service-row">
+            <div key={s.id} className="group-row service-row">
+              <span className="service-time">{s.time}</span>
+              <span className="service-divider" />
               <span className="service-info">
                 <span className="service-name">{s.name}</span>
-                <span className="service-place">
-                  <span style={{
-                    display: 'inline-block',
-                    background: 'var(--surface)',
-                    color: 'var(--primary)',
-                    fontSize: '0.72rem',
-                    fontWeight: '600',
-                    padding: '2px 8px',
-                    borderRadius: '20px',
-                    border: '1px solid rgba(139,90,43,0.15)',
-                  }}>{s.place}</span>
-                </span>
+                {s.place && (
+                  <span className="badge"><i className="fas fa-location-dot" />{s.place}</span>
+                )}
               </span>
-              <span className="service-time">{s.time}</span>
             </div>
           ))}
         </div>

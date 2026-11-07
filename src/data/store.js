@@ -1,3 +1,5 @@
+import { DEFAULT_GREETING } from './defaultGreeting';
+
 const KEYS = {
   announcements: 'cms_announcements',
   bulletin:      'cms_bulletin',
@@ -25,7 +27,7 @@ const defaults = {
     subtitle: '한국기독교장로회 사랑의교회에 오신 것을 환영합니다',
   },
   greeting: {
-    text: '사랑의 교회에 오신 것을 환영합니다.',
+    text: DEFAULT_GREETING,
   },
   accounts: [
     { id: 1, label: '십일조 · 감사헌금', bank: '은행', number: '111-111-11111' },

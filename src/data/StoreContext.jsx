@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { loadDoc, saveDoc } from '../firebase';
+import { DEFAULT_GREETING, withDefaultGreeting } from './defaultGreeting';
 
 const defaults = {
   announcements: [],
@@ -17,7 +18,7 @@ const defaults = {
     title:    '함께 지어져 가는 교회',
     subtitle: '한국기독교장로회 사랑의교회에 오신 것을 환영합니다',
   },
-  greeting: { text: '사랑의 교회에 오신 것을 환영합니다.', history: '', photoUrl: '' },
+  greeting: { text: DEFAULT_GREETING, history: '', photoUrl: '' },
 };
 
 const KEYS = ['announcements', 'bulletin', 'services', 'congregation', 'hero', 'greeting'];
@@ -38,7 +39,8 @@ const StoreContext = createContext();
 
 export function StoreProvider({ children }) {
   const cached = readCache();
-  const [store, setStore] = useState(cached ?? defaults);
+  const initial = { ...defaults, ...(cached ?? {}) };
+  const [store, setStore] = useState({ ...initial, greeting: withDefaultGreeting(initial.greeting) });
   const [loading, setLoading] = useState(false); // 로딩 화면 없이 캐시/기본값으로 즉시 렌더링하고 백그라운드 동기화
 
   useEffect(() => {
@@ -46,6 +48,7 @@ export function StoreProvider({ children }) {
       .then(entries => {
         const loaded = { ...defaults, ...(readCache() ?? {}) };
         entries.forEach(([key, val]) => { if (val !== null) loaded[key] = val; });
+        loaded.greeting = withDefaultGreeting(loaded.greeting);
         setStore(loaded);
         writeCache(loaded);
       })

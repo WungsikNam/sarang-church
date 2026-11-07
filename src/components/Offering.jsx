@@ -17,32 +17,38 @@ const Offering = () => {
   return (
     <div className="page">
       <div className="page-body">
-        {accounts.map((a, i) => (
-          <div key={a.id ?? i} className="offering-hero">
-            <div className="offering-label">헌금 계좌</div>
-            <div className="offering-title">{a.label}</div>
-            <div className="offering-account">
-              <span className="account-num">{a.bank} {a.number}</span>
-              <button className="copy-btn" onClick={() => copy(`${a.bank} ${a.number}`, i)}>
-                {copied === i ? '복사됨 ✓' : '복사'}
-              </button>
-            </div>
+        {accounts.length === 0 ? (
+          <div className="empty-state">
+            <span className="empty-state-icon"><i className="fas fa-hand-holding-heart" /></span>
+            <p className="empty-state-title">등록된 계좌가 없습니다</p>
           </div>
-        ))}
-
-        {accounts.length === 0 && (
-          <div className="card" style={{ textAlign: 'center', color: 'var(--text-hint)', padding: '40px 20px' }}>
-            등록된 계좌가 없습니다.
+        ) : (
+          <div className="offering-list">
+            {accounts.map((a, i) => (
+              <div key={a.id ?? i} className="offering-card">
+                <div className="offering-label">헌금 계좌</div>
+                <div className="offering-title">{a.label}</div>
+                <div className="offering-account">
+                  <span>
+                    <span className="account-bank">{a.bank}</span>
+                    <span className="account-num">{a.number}</span>
+                  </span>
+                  <button className="copy-btn" onClick={() => copy(`${a.bank} ${a.number}`, i)}>
+                    {copied === i ? '복사됨 ✓' : '복사'}
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
         )}
 
-        <div className="card" style={{ fontSize: '0.85rem', color: 'var(--text-sub)', lineHeight: '1.8' }}>
-          <p style={{ fontWeight: '600', color: 'var(--text)', marginBottom: '6px' }}>
-            <i className="fas fa-info-circle" style={{ color: 'var(--primary)', marginRight: '6px' }} />
-            헌금 안내
-          </p>
-          <p>헌금 시 예금주명 뒤에 성함을 함께 기재해 주시면 감사하겠습니다.</p>
-          <p style={{ marginTop: '6px' }}>문의: 032-651-1690</p>
+        <div className="info-note">
+          <i className="fas fa-info-circle" />
+          <span>
+            <strong>헌금 안내</strong>
+            헌금 시 예금주명 뒤에 성함을 함께 기재해 주시면 감사하겠습니다.
+            <br />문의: <a href="tel:032-651-1690" style={{ color: 'inherit' }}>032-651-1690</a>
+          </span>
         </div>
       </div>
     </div>
