@@ -303,32 +303,22 @@ main {
 .icon-menu-item i { font-size: 1.75rem; color: var(--accent); }
 .icon-menu-item span { font-size: 0.92rem; font-weight: 700; color: var(--text); letter-spacing: -0.4px; }
 
-/* ── 홈: 하단 3분할 타일 ─────────────────────── */
-.tile-trio {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+/* ── 홈: 하단 이미지 버튼 ───────────────────── */
+.home-banners {
+  display: flex;
+  flex-direction: column;
   gap: 10px;
   padding: 0 16px;
   margin-bottom: 28px;
 }
-.tile-sm {
-  position: relative;
-  height: 108px;
-  padding: 14px;
-  border-radius: var(--r);
-  color: #fff;
-  text-decoration: none;
-  overflow: hidden;
+.home-banner {
+  display: block;
+  border-radius: 24px;
+  filter: drop-shadow(0 2px 8px rgba(28,46,94,0.10));
   transition: transform 0.2s var(--ease);
 }
-.tile-sm:active { transform: scale(0.96); }
-.tile-sm strong { font-size: 0.98rem; font-weight: 700; letter-spacing: -0.4px; }
-.tile-sm i {
-  position: absolute;
-  right: 14px; bottom: 14px;
-  font-size: 1.6rem;
-  opacity: 0.95;
-}
+.home-banner:active { transform: scale(0.98); }
+.home-banner img { display: block; width: 100%; height: auto; }
 
 /* ── 표어 카드 ─────────────────────────────────── */
 .motto-card {

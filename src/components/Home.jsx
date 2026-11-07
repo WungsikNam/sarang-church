@@ -70,15 +70,13 @@ const Home = ({ navigateTo }) => {
         ))}
       </nav>
 
-      {/* 하단 타일 */}
-      <div className="tile-trio">
-        <a className="tile-sm tile-sky" href="#announcements" onClick={go('announcements')}>
-          <strong>공지사항</strong>
-          <i className="fas fa-bullhorn" />
+      {/* 하단 이미지 버튼 */}
+      <div className="home-banners">
+        <a className="home-banner" href="#announcements" onClick={go('announcements')}>
+          <img src="/home-notice.webp" alt="공지사항 바로가기" width="900" height="327" loading="lazy" />
         </a>
-        <a className="tile-sm tile-navy" href="#location" onClick={go('location')}>
-          <strong>오시는 길</strong>
-          <i className="fas fa-location-dot" />
+        <a className="home-banner" href="#service" onClick={go('service')}>
+          <img src="/home-service.webp" alt="예배안내 바로가기" width="900" height="328" loading="lazy" />
         </a>
       </div>
 
