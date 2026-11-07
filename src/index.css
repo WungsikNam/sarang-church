@@ -303,22 +303,58 @@ main {
 .icon-menu-item i { font-size: 1.75rem; color: var(--accent); }
 .icon-menu-item span { font-size: 0.92rem; font-weight: 700; color: var(--text); letter-spacing: -0.4px; }
 
-/* ── 홈: 하단 이미지 버튼 ───────────────────── */
-.home-banners {
-  display: flex;
-  flex-direction: column;
+/* ── 홈: 하단 타일 ──────────────────────────── */
+.tile-trio {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 10px;
   padding: 0 16px;
   margin-bottom: 28px;
 }
-.home-banner {
-  display: block;
-  border-radius: 24px;
-  filter: drop-shadow(0 2px 8px rgba(28,46,94,0.10));
+.tile-sm {
+  position: relative;
+  height: 108px;
+  padding: 14px;
+  border-radius: var(--r);
+  color: #fff;
+  text-decoration: none;
+  overflow: hidden;
   transition: transform 0.2s var(--ease);
 }
-.home-banner:active { transform: scale(0.98); }
-.home-banner img { display: block; width: 100%; height: auto; }
+.tile-sm:active { transform: scale(0.96); }
+.tile-sm strong { position: relative; z-index: 1; font-size: 0.98rem; font-weight: 700; letter-spacing: -0.4px; }
+.tile-sm i {
+  position: absolute;
+  right: 14px; bottom: 14px;
+  font-size: 1.6rem;
+  opacity: 0.95;
+}
+
+/* ── 사진 타일 (하늘 배경 + 그림) ─────────────── */
+.tile-photo {
+  background-color: #5DA9F0;
+  background-repeat: no-repeat, no-repeat;
+}
+.tile-photo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(20,70,150,0.35) 0%, rgba(20,70,150,0) 55%);
+  pointer-events: none;
+}
+.tile-photo .tile-text { position: relative; z-index: 1; margin-top: auto; text-shadow: 0 1px 6px rgba(10,40,100,0.3); }
+.tile-photo-service {
+  background-image: url(/tile-service.webp), linear-gradient(165deg, #4C9AEB 0%, #86C0F4 100%);
+  background-size: 42% auto, cover;
+  background-position: right 8px top 8px, center;
+}
+.tile-photo-notice {
+  background-image: url(/tile-notice.webp), linear-gradient(165deg, #4C9AEB 0%, #86C0F4 100%);
+  background-size: auto 66%, cover;
+  background-position: right 6px bottom 4px, center;
+}
+.tile-photo-notice::after { display: none; }
+.tile-photo-notice strong { text-shadow: 0 1px 6px rgba(10,40,100,0.3); }
 
 /* ── 표어 카드 ─────────────────────────────────── */
 .motto-card {

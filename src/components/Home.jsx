@@ -50,8 +50,7 @@ const Home = ({ navigateTo }) => {
             </span>
             <span className="tile-play"><i className="fas fa-play" /></span>
           </a>
-          <a className="tile tile-sky" href="#service" onClick={go('service')}>
-            <i className="tile-icon fas fa-hands-praying" />
+          <a className="tile tile-sky tile-photo tile-photo-service" href="#service" onClick={go('service')}>
             <span className="tile-text">
               <strong className="tile-title">예배안내</strong>
               <span className="tile-link">바로가기 <i className="fas fa-arrow-right-long" /></span>
@@ -70,13 +69,14 @@ const Home = ({ navigateTo }) => {
         ))}
       </nav>
 
-      {/* 하단 이미지 버튼 */}
-      <div className="home-banners">
-        <a className="home-banner" href="#announcements" onClick={go('announcements')}>
-          <img src="/home-notice.webp" alt="공지사항 바로가기" width="900" height="327" loading="lazy" />
+      {/* 하단 타일 */}
+      <div className="tile-trio">
+        <a className="tile-sm tile-sky tile-photo tile-photo-notice" href="#announcements" onClick={go('announcements')}>
+          <strong>공지사항</strong>
         </a>
-        <a className="home-banner" href="#service" onClick={go('service')}>
-          <img src="/home-service.webp" alt="예배안내 바로가기" width="900" height="328" loading="lazy" />
+        <a className="tile-sm tile-navy" href="#location" onClick={go('location')}>
+          <strong>오시는 길</strong>
+          <i className="fas fa-location-dot" />
         </a>
       </div>
 
