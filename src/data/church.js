@@ -1,6 +1,7 @@
 export const CHURCH_NAME    = '사랑의교회';
 export const CHURCH_ADDRESS = '경기 부천시 원미구 장말로187번길 30';
 export const CHURCH_PHONE   = '032-651-1690';
+export const CHURCH_AREA    = '부천 중동 · 중동역 인근';
 
 /* 주소검색이 실패할 때 쓰는 대략 좌표 (장말로187번길, 부천 중동) */
 export const CHURCH_LAT = 37.49387;

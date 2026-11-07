@@ -100,8 +100,8 @@ function AppInner() {
         <p className="footer-name">한국기독교장로회 사랑의교회</p>
         <p className="footer-pastors">담임목사 김윤범 · 원로목사 성양권</p>
         <div className="footer-contact">
-          <span><i className="fas fa-map-marker-alt" />경기 부천시 원미구 장말로187번길 30</span>
-          <a href="tel:032-651-1690"><i className="fas fa-phone-alt" />032-651-1690</a>
+          <span><i className="fas fa-map-marker-alt" />경기 부천시 원미구 장말로187번길 30 (중동)</span>
+          <span className="footer-area">부천 중동 · 중동역 인근</span>
         </div>
         <p className="footer-copy">© 2026 사랑의교회. All rights reserved.</p>
         <button className="footer-admin" onClick={() => navigateTo('admin')}>관리자</button>

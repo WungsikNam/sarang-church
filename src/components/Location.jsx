@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { CHURCH_ADDRESS, KAKAO_MAP_URL, mountChurchMap } from '../data/church';
+import { CHURCH_ADDRESS, CHURCH_AREA, KAKAO_MAP_URL, mountChurchMap } from '../data/church';
 
 const CopyButton = ({ text }) => {
   const [copied, setCopied] = useState(false);
@@ -42,6 +42,7 @@ const Location = () => {
             <span className="row-body">
               <span className="location-text-label">주소</span>
               <span className="location-text-val">{CHURCH_ADDRESS}</span>
+              <span className="row-sub">{CHURCH_AREA}</span>
             </span>
             <CopyButton text={CHURCH_ADDRESS} />
           </div>
