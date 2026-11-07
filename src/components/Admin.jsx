@@ -215,7 +215,7 @@ function ServicesTab({ data, onChange }) {
     setRows(rows.map(r => r.id === id ? { ...r, [field]: value } : r));
 
   const add = () =>
-    setRows([...rows, { id: Date.now(), name: '', time: '00:00', place: '본당' }]);
+    setRows([...rows, { id: Date.now(), name: '', day: '주일', time: '00:00', place: '대예배실' }]);
 
   const remove = (id) => {
     if (!confirm('삭제할까요?')) return;
@@ -236,6 +236,7 @@ function ServicesTab({ data, onChange }) {
           <thead>
             <tr>
               <th style={s.th}>예배명</th>
+              <th style={s.th}>요일</th>
               <th style={s.th}>시간</th>
               <th style={s.th}>장소</th>
               <th style={s.th}></th>
@@ -245,6 +246,7 @@ function ServicesTab({ data, onChange }) {
             {rows.map(row => (
               <tr key={row.id}>
                 <td style={s.td}><input value={row.name} onChange={e => update(row.id, 'name', e.target.value)} style={s.tableInput} placeholder="예배명" /></td>
+                <td style={s.td}><input value={row.day ?? ''} onChange={e => update(row.id, 'day', e.target.value)} style={s.tableInput} placeholder="주일 / 수 / 화~금" /></td>
                 <td style={s.td}><input type="time" value={row.time} onChange={e => update(row.id, 'time', e.target.value)} style={s.tableInput} /></td>
                 <td style={s.td}><input value={row.place} onChange={e => update(row.id, 'place', e.target.value)} style={s.tableInput} placeholder="장소" /></td>
                 <td style={s.td}><button onClick={() => remove(row.id)} style={s.btnDanger}>삭제</button></td>

@@ -688,15 +688,24 @@ button.group-row:active, a.group-row:active { background: var(--bg); }
 
 /* ── 예배안내 ─────────────────────────────────── */
 .service-row { gap: 16px; padding: 18px 16px; }
-.service-time {
+.service-when {
   width: 64px;
   flex-shrink: 0;
-  font-size: 1.2rem;
-  font-weight: 700;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.15;
+}
+.service-period { font-size: 0.74rem; font-weight: 600; color: var(--text-hint); }
+.service-time {
+  font-size: 1.25rem;
+  font-weight: 800;
   color: var(--primary);
   letter-spacing: -0.5px;
   font-variant-numeric: tabular-nums;
 }
+.service-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.badge-day { background: rgba(224,123,57,0.12); color: var(--accent); }
 .service-divider {
   width: 1px;
   align-self: stretch;

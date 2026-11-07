@@ -1,18 +1,12 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { loadDoc, saveDoc } from '../firebase';
 import { DEFAULT_GREETING, withDefaultGreeting } from './defaultGreeting';
+import { DEFAULT_SERVICES, withDefaultServices } from './defaultServices';
 
 const defaults = {
   announcements: [],
   bulletin: { title: '2026년 4월 19일 주보', url: '/bulletin.pdf' },
-  services: [
-    { id: 1, name: '주일 예배',              time: '11:00', place: '본당' },
-    { id: 2, name: '영유아부 예배',          time: '11:00', place: '교육관' },
-    { id: 3, name: '학생회 예배 (중고등)',   time: '13:30', place: '본당' },
-    { id: 4, name: '수요예배',               time: '20:00', place: '본당' },
-    { id: 5, name: '금요예배',               time: '20:00', place: '본당' },
-    { id: 6, name: '아침 말씀 산책',          time: '06:00', place: '본당' },
-  ],
+  services: DEFAULT_SERVICES,
   congregation: [],
   hero: {
     title:    '함께 지어져 가는 교회',
@@ -40,7 +34,11 @@ const StoreContext = createContext();
 export function StoreProvider({ children }) {
   const cached = readCache();
   const initial = { ...defaults, ...(cached ?? {}) };
-  const [store, setStore] = useState({ ...initial, greeting: withDefaultGreeting(initial.greeting) });
+  const [store, setStore] = useState({
+    ...initial,
+    greeting: withDefaultGreeting(initial.greeting),
+    services: withDefaultServices(initial.services),
+  });
   const [loading, setLoading] = useState(false); // 로딩 화면 없이 캐시/기본값으로 즉시 렌더링하고 백그라운드 동기화
 
   useEffect(() => {
@@ -49,6 +47,7 @@ export function StoreProvider({ children }) {
         const loaded = { ...defaults, ...(readCache() ?? {}) };
         entries.forEach(([key, val]) => { if (val !== null) loaded[key] = val; });
         loaded.greeting = withDefaultGreeting(loaded.greeting);
+        loaded.services = withDefaultServices(loaded.services);
         setStore(loaded);
         writeCache(loaded);
       })
