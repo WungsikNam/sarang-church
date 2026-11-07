@@ -1,4 +1,3 @@
-import { useStore } from '../data/StoreContext';
 import { YOUTUBE_URL } from './YoutubeCard';
 
 const iconMenu = [
@@ -11,9 +10,6 @@ const iconMenu = [
 ];
 
 const Home = ({ navigateTo }) => {
-  const { store } = useStore();
-  const recent = (store.announcements ?? []).slice(0, 3);
-  const formatDate = (raw) => raw ? raw.replace(/-/g, '.') : '';
   const go = (id) => (e) => { e.preventDefault(); navigateTo(id); };
 
   return (
@@ -86,33 +82,6 @@ const Home = ({ navigateTo }) => {
         </a>
       </div>
 
-      {/* 최근 공지사항 */}
-      <section className="home-section">
-        <div className="section-header">
-          <h3>최근 공지사항</h3>
-          <a className="section-more" href="#announcements" onClick={go('announcements')}>
-            전체보기 <i className="fas fa-chevron-right" />
-          </a>
-        </div>
-        <div className="notice-preview">
-          {recent.length === 0 ? (
-            <div className="notice-empty">
-              <span className="notice-empty-icon"><i className="far fa-bell" /></span>
-              <p className="notice-empty-title">새로운 소식이 없습니다</p>
-              <p className="notice-empty-sub">공지가 올라오면 이곳에 표시됩니다</p>
-            </div>
-          ) : (
-            recent.map(item => (
-              <div key={item.id} className="notice-preview-item"
-                onClick={() => navigateTo('announcements')}>
-                <span className="notice-dot" />
-                <span className="notice-preview-title">{item.title}</span>
-                <span className="notice-preview-date">{formatDate(item.date)}</span>
-              </div>
-            ))
-          )}
-        </div>
-      </section>
     </div>
   );
 };
