@@ -306,7 +306,7 @@ main {
 /* ── 홈: 하단 3분할 타일 ─────────────────────── */
 .tile-trio {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 10px;
   padding: 0 16px;
   margin-bottom: 28px;

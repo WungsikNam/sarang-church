@@ -84,10 +84,6 @@ const Home = ({ navigateTo }) => {
           <strong>오시는 길</strong>
           <i className="fas fa-location-dot" />
         </a>
-        <a className="tile-sm tile-slate" href="#bulletin" onClick={go('bulletin')}>
-          <strong>온라인 주보</strong>
-          <i className="fas fa-book-open" />
-        </a>
       </div>
 
       {/* 최근 공지사항 */}
